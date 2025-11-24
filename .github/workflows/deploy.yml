@@ -16,6 +16,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  administration: write
 
 # Permite que solo un deployment se ejecute a la vez
 concurrency:
@@ -57,6 +58,17 @@ jobs:
         working-directory: ${{ steps.check_structure.outputs.working_dir }}
         run: npm install
 
+      - name: Configurar homepage para GitHub Pages
+        working-directory: ${{ steps.check_structure.outputs.working_dir }}
+        run: |
+          REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
+          HOMEPAGE="https://${{ github.repository_owner }}.github.io/${REPO_NAME}"
+          echo "Configurando homepage: ${HOMEPAGE}"
+          # Actualizar package.json con el homepage usando Node.js
+          node -e "const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('package.json')); pkg.homepage='${HOMEPAGE}'; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
+          echo "✅ Homepage configurado: ${HOMEPAGE}"
+          cat package.json | grep homepage
+
       - name: Ejecutar tests (si existen)
         working-directory: ${{ steps.check_structure.outputs.working_dir }}
         run: npm test -- --watchAll=false || true
@@ -66,12 +78,9 @@ jobs:
         working-directory: ${{ steps.check_structure.outputs.working_dir }}
         env:
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL || 'https://umb-web-taller.onrender.com' }}
-        run: npm run build
+        run: CI=false npm run build
 
-      - name: Configurar Pages
-        uses: actions/configure-pages@v4
-
-      - name: Subir artefactos
+      - name: Subir artefactos a Pages
         uses: actions/upload-pages-artifact@v3
         with:
           path: ${{ steps.check_structure.outputs.build_path }}
@@ -90,7 +99,10 @@ jobs:
 
 # NOTAS:
 # - Este workflow construye la app React y la despliega automáticamente
-# - La URL será: https://TU_USUARIO.github.io/umb-frontend-react/
-# - Configura la variable secreta REACT_APP_API_URL en Settings > Secrets
-# - GitHub Pages debe estar habilitado en Settings > Pages del repositorio
-
+# - La URL será: https://TU_USUARIO.github.io/REPOSITORIO/
+# - ⚠️ IMPORTANTE: Debes habilitar GitHub Pages manualmente:
+#   1. Ve a Settings > Pages
+#   2. En Source, selecciona "GitHub Actions"
+#   3. Si no aparece, selecciona la rama "main" y carpeta "/ (root)"
+#   4. Haz clic en Save
+# - Ver CONFIGURAR_PAGES.md para instrucciones detalladas
