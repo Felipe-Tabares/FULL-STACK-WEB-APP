@@ -59,7 +59,7 @@ function App() {
 
     try {
       // Crear tarea
-      const resultado = await crearTareaLS(titulo.trim());
+      await crearTareaLS(titulo.trim());
 
       // Recargar todas las tareas para mantener el orden
       const todasLasTareas = obtenerTareasLS();
@@ -169,9 +169,9 @@ function App() {
           ) : tareas.length === 0 ? (
             <p className="mensaje-vacio">No hay tareas. ¡Agrega una nueva!</p>
           ) : (
-            <ul className="tareas-lista" role="list">
+            <ul className="tareas-lista">
               {tareas.map((tarea) => (
-                <li key={tarea.id} className="tarea-item" role="listitem">
+                <li key={tarea.id} className="tarea-item">
                   <input
                     type="checkbox"
                     checked={tarea.completada}
