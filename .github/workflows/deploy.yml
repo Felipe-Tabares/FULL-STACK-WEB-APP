@@ -30,22 +30,40 @@ jobs:
       - name: Checkout código
         uses: actions/checkout@v4
 
+      - name: Verificar estructura del repositorio
+        id: check_structure
+        run: |
+          echo "Contenido del repositorio:"
+          ls -la
+          if [ -d "frontend" ]; then
+            echo "✅ Carpeta frontend encontrada"
+            echo "working_dir=frontend" >> $GITHUB_OUTPUT
+            echo "build_path=frontend/build" >> $GITHUB_OUTPUT
+          elif [ -f "package.json" ]; then
+            echo "✅ package.json encontrado en la raíz"
+            echo "working_dir=." >> $GITHUB_OUTPUT
+            echo "build_path=build" >> $GITHUB_OUTPUT
+          else
+            echo "❌ No se encontró ni frontend ni package.json"
+            exit 1
+          fi
+
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '18'
 
       - name: Instalar dependencias
-        working-directory: ./frontend
+        working-directory: ${{ steps.check_structure.outputs.working_dir }}
         run: npm install
 
       - name: Ejecutar tests (si existen)
-        working-directory: ./frontend
+        working-directory: ${{ steps.check_structure.outputs.working_dir }}
         run: npm test -- --watchAll=false || true
         continue-on-error: true
 
       - name: Construir aplicación React
-        working-directory: ./frontend
+        working-directory: ${{ steps.check_structure.outputs.working_dir }}
         env:
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL || 'https://umb-web-taller.onrender.com' }}
         run: npm run build
@@ -56,7 +74,7 @@ jobs:
       - name: Subir artefactos
         uses: actions/upload-pages-artifact@v3
         with:
-          path: './frontend/build'
+          path: ${{ steps.check_structure.outputs.build_path }}
 
   # Job para desplegar en GitHub Pages
   deploy:
