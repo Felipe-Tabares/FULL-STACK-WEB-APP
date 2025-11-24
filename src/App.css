@@ -1,0 +1,250 @@
+/* App.css - Estilos del componente principal */
+
+.App {
+  max-width: 800px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.App-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  text-align: center;
+}
+
+.App-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.App-header p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.App-main {
+  padding: 2rem;
+}
+
+/* Formulario */
+.form-section {
+  margin-bottom: 2rem;
+}
+
+.tarea-form {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.titulo-input {
+  flex: 1;
+  min-width: 200px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  transition: border-color 0.3s ease;
+}
+
+.titulo-input:focus {
+  border-color: #667eea;
+  outline: none;
+}
+
+.titulo-input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.btn-agregar {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  min-width: 150px;
+}
+
+.btn-agregar:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-agregar:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-agregar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Mensajes */
+.mensaje-error {
+  background-color: #fee;
+  color: #c33;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  border-left: 4px solid #c33;
+}
+
+.mensaje-carga,
+.mensaje-vacio {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-size: 1.1rem;
+}
+
+/* Lista de tareas */
+.tareas-section {
+  margin-bottom: 2rem;
+}
+
+.tareas-lista {
+  list-style: none;
+  padding: 0;
+}
+
+.tarea-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  background: #f9f9f9;
+  border-radius: 8px;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.tarea-item:hover {
+  background: #f0f0f0;
+  transform: translateX(4px);
+}
+
+.checkbox-tarea {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.tarea-titulo {
+  flex: 1;
+  font-size: 1.1rem;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s ease, text-decoration 0.2s ease;
+}
+
+.tarea-titulo.completada {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.btn-eliminar {
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: #ff4444;
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  padding: 0;
+  line-height: 1;
+}
+
+.btn-eliminar:hover:not(:disabled) {
+  background: #cc0000;
+  transform: scale(1.1);
+}
+
+.btn-eliminar:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.btn-eliminar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Footer */
+.App-footer {
+  padding: 1rem 2rem;
+  background: #f9f9f9;
+  text-align: center;
+  color: #666;
+  border-top: 1px solid #e0e0e0;
+}
+
+.App-footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Utilidades de accesibilidad */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Responsive Design usando Flexbox */
+@media (max-width: 600px) {
+  .App-header h1 {
+    font-size: 2rem;
+  }
+
+  .App-main {
+    padding: 1rem;
+  }
+
+  .tarea-form {
+    flex-direction: column;
+  }
+
+  .titulo-input {
+    min-width: 100%;
+  }
+
+  .btn-agregar {
+    width: 100%;
+  }
+
+  .tarea-item {
+    flex-wrap: wrap;
+  }
+}
+
+/* Mejoras de accesibilidad */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+

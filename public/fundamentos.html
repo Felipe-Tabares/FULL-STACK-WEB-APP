@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Página de fundamentos web: HTML semántico, CSS y JavaScript básico">
+    <title>Fundamentos Web - HTML, CSS y JavaScript</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <!-- HTML Semántico: uso de <header>, <nav>, <main>, <section>, <article>, <footer> -->
+    <header role="banner">
+        <h1>Fundamentos Web</h1>
+        <p>Demostración de HTML Semántico, CSS y JavaScript</p>
+    </header>
+
+    <nav role="navigation" aria-label="Navegación principal">
+        <ul>
+            <li><a href="#html">HTML Semántico</a></li>
+            <li><a href="#css">CSS</a></li>
+            <li><a href="#javascript">JavaScript</a></li>
+        </ul>
+    </nav>
+
+    <main role="main">
+        <!-- Sección de HTML Semántico -->
+        <section id="html" aria-labelledby="html-heading">
+            <h2 id="html-heading">HTML Semántico</h2>
+            <article>
+                <h3>¿Qué es HTML Semántico?</h3>
+                <p>
+                    HTML semántico utiliza etiquetas que describen el significado del contenido,
+                    no solo su apariencia. Esto ayuda a:
+                </p>
+                <ul>
+                    <li>Mejorar la accesibilidad</li>
+                    <li>Facilitar el SEO</li>
+                    <li>Hacer el código más legible</li>
+                </ul>
+            </article>
+        </section>
+
+        <!-- Sección de CSS -->
+        <section id="css" aria-labelledby="css-heading">
+            <h2 id="css-heading">CSS - Flexbox y Estilos</h2>
+            <article>
+                <h3>Ejemplo de Flexbox</h3>
+                <div class="flexbox-container">
+                    <div class="flexbox-item">Item 1</div>
+                    <div class="flexbox-item">Item 2</div>
+                    <div class="flexbox-item">Item 3</div>
+                </div>
+                <p>
+                    Flexbox permite alinear y distribuir elementos de forma flexible.
+                    Usamos <code>display: flex</code> y <code>align-items: center</code> para centrar elementos.
+                </p>
+            </article>
+        </section>
+
+        <!-- Sección de JavaScript -->
+        <section id="javascript" aria-labelledby="js-heading">
+            <h2 id="js-heading">JavaScript Básico</h2>
+            
+            <article>
+                <h3>Ejemplo 1: Función con Switch</h3>
+                <p>Determinar la prioridad de una tarea usando switch:</p>
+                <form id="prioridad-form">
+                    <label for="prioridad-input">Ingresa un número de prioridad (1-3):</label>
+                    <input type="number" id="prioridad-input" min="1" max="3" value="1">
+                    <button type="button" onclick="determinarPrioridad()">Determinar Prioridad</button>
+                </form>
+                <div id="resultado-prioridad" class="resultado" role="status" aria-live="polite"></div>
+            </article>
+
+            <article>
+                <h3>Ejemplo 2: Función con For Loop y Continue</h3>
+                <p>Sumar números del 1 al 10, saltando el número 6:</p>
+                <button type="button" onclick="sumarConContinue()">Ejecutar Suma</button>
+                <div id="resultado-suma" class="resultado" role="status" aria-live="polite"></div>
+            </article>
+
+            <article>
+                <h3>Ejemplo 3: Manipulación del DOM</h3>
+                <p>Crear elementos dinámicamente:</p>
+                <button type="button" onclick="agregarElemento()">Agregar Elemento</button>
+                <button type="button" onclick="limpiarElementos()">Limpiar</button>
+                <div id="elementos-dinamicos" class="elementos-container"></div>
+            </article>
+        </section>
+    </main>
+
+    <footer role="contentinfo">
+        <p>&copy; 2024 UMB Web Taller. Fundamentos Web.</p>
+        <p>
+            <small>
+                Esta página demuestra conceptos básicos de HTML semántico, CSS (Flexbox)
+                y JavaScript (switch, for loops, manipulación del DOM).
+            </small>
+        </p>
+    </footer>
+
+    <!-- JavaScript embebido -->
+    <script>
+        // Función que usa switch para determinar prioridad
+        function determinarPrioridad() {
+            const input = document.getElementById('prioridad-input');
+            const resultado = document.getElementById('resultado-prioridad');
+            const valor = parseInt(input.value);
+            
+            let mensaje = '';
+            
+            // Uso de switch para diferentes casos
+            switch(valor) {
+                case 1:
+                    mensaje = 'Prioridad ALTA: Esta tarea es urgente y debe completarse primero.';
+                    break;
+                case 2:
+                    mensaje = 'Prioridad MEDIA: Esta tarea es importante pero puede esperar un poco.';
+                    break;
+                case 3:
+                    mensaje = 'Prioridad BAJA: Esta tarea puede completarse cuando haya tiempo disponible.';
+                    break;
+                default:
+                    mensaje = 'Por favor, ingresa un número entre 1 y 3.';
+                    break;
+            }
+            
+            resultado.textContent = mensaje;
+            resultado.className = 'resultado resultado-activo';
+        }
+
+        // Función que usa for loop con continue
+        // Sumar números del 1 al 10, saltando el 6
+        function sumarConContinue() {
+            const resultado = document.getElementById('resultado-suma');
+            let suma = 0;
+            let numerosUsados = [];
+            
+            // For loop que itera del 1 al 10
+            for (let i = 1; i <= 10; i++) {
+                // Si el número es 6, usar continue para saltarlo
+                if (i === 6) {
+                    continue; // Salta al siguiente ciclo del loop
+                }
+                
+                suma += i;
+                numerosUsados.push(i);
+            }
+            
+            resultado.innerHTML = `
+                <strong>Resultado de la suma:</strong> ${suma}<br>
+                <strong>Números sumados:</strong> ${numerosUsados.join(', ')}<br>
+                <small>Nota: El número 6 fue saltado usando continue</small>
+            `;
+            resultado.className = 'resultado resultado-activo';
+        }
+
+        // Función para agregar elementos dinámicamente al DOM
+        let contadorElementos = 0;
+        
+        function agregarElemento() {
+            contadorElementos++;
+            const container = document.getElementById('elementos-dinamicos');
+            
+            // Crear un nuevo elemento div
+            const nuevoElemento = document.createElement('div');
+            nuevoElemento.className = 'elemento-dinamico';
+            nuevoElemento.textContent = `Elemento dinámico #${contadorElementos}`;
+            
+            // Agregar al contenedor
+            container.appendChild(nuevoElemento);
+        }
+
+        // Función para limpiar elementos dinámicos
+        function limpiarElementos() {
+            const container = document.getElementById('elementos-dinamicos');
+            container.innerHTML = '';
+            contadorElementos = 0;
+        }
+
+        // Inicialización cuando la página carga
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Página de fundamentos web cargada correctamente');
+        });
+    </script>
+</body>
+</html>
+

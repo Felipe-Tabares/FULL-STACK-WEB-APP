@@ -1,0 +1,8 @@
+# robots.txt - Instrucciones para los crawlers de motores de búsqueda
+
+User-agent: *
+Allow: /
+
+# Sitemap (actualizar con la URL real cuando esté desplegado)
+Sitemap: https://TU_USUARIO.github.io/umb-frontend-react/sitemap.xml
+
