@@ -16,7 +16,6 @@ permissions:
   contents: read
   pages: write
   id-token: write
-  administration: write
 
 # Permite que solo un deployment se ejecute a la vez
 concurrency:
@@ -34,18 +33,18 @@ jobs:
       - name: Verificar estructura del repositorio
         id: check_structure
         run: |
-          echo "Contenido del repositorio:"
+          echo "=== Estructura del repositorio ==="
           ls -la
-          if [ -d "frontend" ]; then
-            echo "✅ Carpeta frontend encontrada"
+          echo ""
+          
+          if [ -d "frontend" ] && [ -f "frontend/package.json" ]; then
+            echo "✅ Carpeta frontend encontrada con package.json"
             echo "working_dir=frontend" >> $GITHUB_OUTPUT
-            echo "build_path=frontend/build" >> $GITHUB_OUTPUT
           elif [ -f "package.json" ]; then
             echo "✅ package.json encontrado en la raíz"
             echo "working_dir=." >> $GITHUB_OUTPUT
-            echo "build_path=build" >> $GITHUB_OUTPUT
           else
-            echo "❌ No se encontró ni frontend ni package.json"
+            echo "❌ No se encontró package.json"
             exit 1
           fi
 
@@ -63,11 +62,14 @@ jobs:
         run: |
           REPO_NAME=$(echo "${{ github.repository }}" | cut -d'/' -f2)
           HOMEPAGE="https://${{ github.repository_owner }}.github.io/${REPO_NAME}"
-          echo "Configurando homepage: ${HOMEPAGE}"
-          # Actualizar package.json con el homepage usando Node.js
+          echo "=== Configurando homepage ==="
+          echo "Homepage: ${HOMEPAGE}"
+          
+          # Actualizar package.json con el homepage
           node -e "const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('package.json')); pkg.homepage='${HOMEPAGE}'; fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));"
-          echo "✅ Homepage configurado: ${HOMEPAGE}"
-          cat package.json | grep homepage
+          
+          echo "✅ Homepage configurado:"
+          grep -A 1 "homepage" package.json || echo "⚠️ No se encontró homepage en package.json"
 
       - name: Ejecutar tests (si existen)
         working-directory: ${{ steps.check_structure.outputs.working_dir }}
@@ -80,10 +82,34 @@ jobs:
           REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL || 'https://umb-web-taller.onrender.com' }}
         run: CI=false npm run build
 
+      - name: Verificar archivos del build y determinar path
+        id: verify_build
+        run: |
+          WORKING_DIR="${{ steps.check_structure.outputs.working_dir }}"
+          if [ "${WORKING_DIR}" = "." ]; then
+            BUILD_DIR="build"
+          else
+            BUILD_DIR="${WORKING_DIR}/build"
+          fi
+          
+          echo "=== Verificando archivos del build ==="
+          echo "Build directory: ${BUILD_DIR}"
+          ls -la ${BUILD_DIR} || (echo "❌ No se encontró la carpeta build" && exit 1)
+          
+          if [ -f "${BUILD_DIR}/index.html" ]; then
+            echo "✅ index.html encontrado"
+            echo "Primeras líneas de index.html:"
+            head -5 "${BUILD_DIR}/index.html"
+            echo "build_path=${BUILD_DIR}" >> $GITHUB_OUTPUT
+          else
+            echo "❌ ERROR: index.html NO encontrado en ${BUILD_DIR}"
+            exit 1
+          fi
+
       - name: Subir artefactos a Pages
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ${{ steps.check_structure.outputs.build_path }}
+          path: ${{ steps.verify_build.outputs.build_path }}
 
   # Job para desplegar en GitHub Pages
   deploy:
